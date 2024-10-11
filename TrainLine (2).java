@@ -79,6 +79,103 @@ public class TrainLine {
         }
         return removedStation;
     }
+    
+public void insert(String name, int position) {
+    // Check if the position is valid
+    if (position < 1 || position > this.numberOfStations + 1) {
+        //position is not possible, do nothing
+        return;
+    }
+    // Create a new station with the given name
+    TrainStation newStation = new TrainStation(name);
+    if (position == 1) {
+        // view if posiition is 1 continue
+        newStation.setNext(this.head);
+        this.head = newStation;
+        //  set the tail to the new station if empty 
+        if (this.tail == null) {
+            this.tail = newStation;
+        }
+    } else {
+        // find the inserted one
+        TrainStation cursor = this.head;
+        for (int i = 1; i < position - 1; i++) {
+            cursor = cursor.getNext();
+        }
+        // places the new station after the cursor
+        newStation.setNext(cursor.getNext());
+        cursor.setNext(newStation);
+        // if station is the new tail, fix it
+        if (newStation.getNext() == null) {
+            this.tail = newStation;
+        }
+    }
+    // changes number of station
+    this.numberOfStations++;
+}
+
+public String toString() {
+    // builds the string representation of the train line
+    StringBuilder sb = new StringBuilder();
+    //  current station to the head of the line
+    TrainStation current = head;
+    int lineLength = 0;
+    //true (right) or false (left)
+    boolean direction = true; 
+        int indentLevel = 0;
+    while (current != null) {
+        // get name
+        String stationName = current.getName();
+        // Get the length
+        int stationLength = stationName.length();
+        // makes sure it doesnt pass 80
+        if (lineLength + stationLength + 4 > 80) {
+            // If so,  newline character 
+            sb.append("\n");
+            lineLength = 0;
+            // Change the direction when reaching 80 characters
+            direction = !direction; 
+        }
+
+        // changes arrow depending
+        if (direction) {
+            if (lineLength == 0) {
+                sb.append(stationName);
+            } else {
+                // arrow symbol
+                sb.append(" --> ").append(stationName);
+            }
+        } else {
+            if (lineLength == 0) {
+                sb.append(stationName);
+            } else {
+                // Otherwise, append the name and the arrow symbol
+                sb.append(stationName).append(" <--");
+            }
+        }
+
+        // fixes line length
+        lineLength += stationLength + (lineLength == 0 ? 0 : 4);
+
+        // Move to the next station
+        current = current.getNext();
+
+        // If there's a next station,change arrow 
+        if (current != null) {
+            if (direction) {
+                sb.append(" -->");
+            } else {
+                sb.append(" <--");
+            }
+        } else {
+            //newline character
+            sb.append("\n");
+        }
+    }
+
+    // return to string 
+    return sb.toString();
+}
 
     public static void main(String[] args) {
         // A few station names
